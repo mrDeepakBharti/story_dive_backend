@@ -1,14 +1,11 @@
 import admin from "firebase-admin";
-import { createRequire } from "module";
 
-// allow require inside ESM
-const require = createRequire(import.meta.url);
+import dotenv from "dotenv";
 
-// load service account JSON
-const serviceAccount = require("../firebase/storydive-cda1a-firebase-adminsdk-fbsvc-c9ed575742.json");
+dotenv.config();
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
 });
 
 const sendNotificationToUser = async (
