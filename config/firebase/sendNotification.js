@@ -1,50 +1,64 @@
-import admin from "firebase-admin";
-
-import dotenv from "dotenv";
-
-dotenv.config();
+import admin from 'firebase-admin';
+import serviceAccount from './/storydive-cda1a-firebase-adminsdk-fbsvc-c9ed575742.json' assert { type: 'json' };
 
 admin.initializeApp({
-  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+  credential: admin.credential.cert(serviceAccount),
 });
 
-const sendNotificationToUser = async (
-  deviceToken,
-  title,
-  body,
-  imageUrl,
-  data,
-  actionPage
-) => {
+
+export const sendNotificationToUser = async (deviceToken, title, body,imageUrl, data,actionPage) => {
   const message = {
     token: deviceToken,
-    notification: { title, body, image: imageUrl },
-    android: { notification: { channel_id: "StoryDive" } },
+    notification: {
+      title: title,
+      body: body,
+      image: imageUrl,  // URL or path to the image file
+    },
+    android: {
+      notification: {
+        channel_id: 'Story Dive', // Specify your channel ID here
+      }
+    },
     apns: {
       payload: {
         aps: {
-          alert: { title, body },
-          sound: "default",
-          badge: 1,
-          "mutable-content": 1,
+          alert: {
+            title: title,
+            body: body,
+          },
+          sound: 'default',
+          badge: 1,  // Optional: Badge count on the app icon
+          'mutable-content': 1  // Required for rich notifications (images, etc.)
         },
       },
-      fcm_options: { image: imageUrl },
+      fcm_options: {
+        image: imageUrl  // URL or path to the image file
+      }
     },
     data: {
       ...data,
-      click_action: actionPage,
+      click_action: actionPage  // Custom action
     },
   };
 
+  console.log("Message", message);
+
   try {
     const response = await admin.messaging().send(message);
-    console.log("✅ Successfully sent message:", response);
-    return { success: 1, result: response, payload: message };
+    console.log('Successfully sent message:', response);
+    return {
+      success : 1,
+      result : response,
+      payload : message
+    }
   } catch (error) {
-    console.error("❌ Error sending message:", error);
-    return { success: 0, result: error, payload: message };
+    console.error('Error sending message:', error);
+    return {
+      success : 0,
+      result : error,
+      payload : message
+    };
   }
 };
 
-export default sendNotificationToUser;
+export default{sendNotificationToUser};
