@@ -120,9 +120,10 @@ export const verifyRegistrationOtp = async (req, res) => {
 
     // ✅ Generate JWT token after successful registration
     const token = generateToken(user._id);
-
-     sendNotificationToUser(
-        "d3KDt6LuSpO-TGtpn-09Za:APA91bGPhQP8klrKBgvuofwSYU3krzsaGNY2olEJg-KHb_HRSyHEcFY9-KIiZD2DBxS18vvFEvPdXv5n9GMI1Wx5twhYdB1u8UcBXYpoaJB_O-QSTadBuI8",
+    
+    if(tempUser.fcmToken)
+   await  sendNotificationToUser(
+        tempUser.fcmToken,
         "Welcome to Story Dive 🎉",
         "You’ve successfully joined the world of stories!",
         "",                // optional image
