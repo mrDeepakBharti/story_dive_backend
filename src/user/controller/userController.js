@@ -1,10 +1,9 @@
 import bcrypt from "bcrypt";
+import sendNotificationToUser from "../../../config/firebase/sendNotification.js";
 import tempUserModel from "../../user/model/tempUserModel.js";
 import userModel from "../../user/model/userModel.js";
 import { generateReferralCode, generateToken, isValidEmail, isValidPassword } from "../../utils/authHelper.js";
 import sendEmail from "../../utils/sendEmail.js";
-
-
 // 📌 Register User + Send OTP
 export const requestRegistration = async (req, res) => {
   try {
@@ -121,6 +120,15 @@ export const verifyRegistrationOtp = async (req, res) => {
 
     // ✅ Generate JWT token after successful registration
     const token = generateToken(user._id);
+
+     sendNotificationToUser(
+        "d3KDt6LuSpO-TGtpn-09Za:APA91bGPhQP8klrKBgvuofwSYU3krzsaGNY2olEJg-KHb_HRSyHEcFY9-KIiZD2DBxS18vvFEvPdXv5n9GMI1Wx5twhYdB1u8UcBXYpoaJB_O-QSTadBuI8",
+        "Welcome to Story Dive 🎉",
+        "You’ve successfully joined the world of stories!",
+        "",                // optional image
+        {},                // custom data
+        "homePage"         // actionPage (your app can open Home screen)
+      );
 
     res.status(201).send({
      statusCode: "200",
